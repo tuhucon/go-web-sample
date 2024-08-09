@@ -5,6 +5,7 @@ import (
 	"fileserver/internal/controller"
 	"fileserver/internal/repository"
 	"fmt"
+	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
@@ -19,7 +20,15 @@ func main() {
 	// mysql DB
 	var db *sql.DB
 	var err error
-	if db, err = sql.Open("mysql", "root:tuhucon@tcp(127.0.0.1:3306)/test"); err != nil {
+	// Capture connection properties.
+	cfg := mysql.Config{
+		User:   "root",
+		Passwd: "tuhucon",
+		Net:    "tcp",
+		Addr:   "127.0.0.1:3306",
+		DBName: "test",
+	}
+	if db, err = sql.Open("mysql", cfg.FormatDSN()); err != nil {
 		slog.Error(err.Error())
 	}
 	defer db.Close()
