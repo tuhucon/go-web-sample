@@ -24,17 +24,8 @@ func main() {
 	middleware.UseHandler(router)
 
 	renderer := render.New()
-	helloController := controller.HelloController{
-		BaseController: controller.BaseController{
-			Render: renderer,
-		},
-	}
-	personController := controller.PersonController{
-		BaseController: controller.BaseController{
-			Render: renderer,
-		},
-		PersonRepository: &repository.PersonRepositoryImp{},
-	}
+	helloController := controller.NewHelloController(renderer)
+	personController := controller.NewPersonController(renderer, &repository.PersonRepositoryImp{})
 
 	// handle hello api
 	router.GET("/hello", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -56,6 +47,7 @@ func main() {
 		}
 	})
 
+	// Create server
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: middleware,
