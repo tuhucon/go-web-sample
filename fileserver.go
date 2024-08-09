@@ -31,6 +31,7 @@ func main() {
 		Addr:    ":8080",
 		Handler: middleware,
 	}
+	//curl -v --http2-prior-knowledge http://localhost:8080/persons/45  : test http2
 	err := http2.ConfigureServer(server, &http2.Server{
 		MaxHandlers:                  0,
 		MaxConcurrentStreams:         0,
