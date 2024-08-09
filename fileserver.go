@@ -2,15 +2,16 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fileserver/internal/controller"
 	"fileserver/internal/repository"
 	"fmt"
 	"github.com/go-sql-driver/mysql"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
 	"github.com/urfave/negroni/v3"
 	"golang.org/x/net/http2"
+	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -32,18 +33,22 @@ func main() {
 		slog.Error(err.Error())
 	}
 	defer db.Close()
-
+	// seting connection pool, max lifetime
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(10)
+	db.SetConnMaxLifetime(8 * time.Hour)
 	rows, err := db.Query("select * from person")
 	defer rows.Close()
-	if err == nil {
-		for rows.Next() {
-			var id int
-			var name string
-			var age int
-			rows.Scan(&id, &name, &age)
-			fmt.Println(id, name, age)
-		}
-	} else {
+	for rows.Next() { // if for end normally or break by an error, rows.close() is call automatically
+		var id int
+		var name string
+		var age int
+		rows.Scan(&id, &name, &age)
+		fmt.Println(id, name, age)
+	}
+	rows.Close() // we can call rows.Close() multiple time, ignoring its err is best practices.
+	//rows.error() store the error raised in for loop, so always check rows.error() after loop and ignore err in for loop
+	if err = rows.Err(); err != nil {
 		slog.Error(err.Error())
 	}
 
@@ -55,6 +60,17 @@ func main() {
 		next(rw, r)
 		slog.Info("request %s need %v", r.URL.Path, time.Since(start))
 	})
+
+	var name string
+	err = db.QueryRow("select name from users where id = ?", 1).Scan(&name) // QueryRow defers error untils we call Scan
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) { // ErrNoRows isn't error, we should treat it as a biz logic use-case.
+			// there were no rows, but otherwise no error occurred
+		} else {
+			log.Fatal(err)
+		}
+	}
+
 	middleware.UseHandler(router)
 
 	renderer := render.New()
