@@ -1,8 +1,11 @@
 package main
 
 import (
+	"database/sql"
 	"fileserver/internal/controller"
 	"fileserver/internal/repository"
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
 	"github.com/urfave/negroni/v3"
@@ -13,6 +16,28 @@ import (
 )
 
 func main() {
+	// mysql DB
+	var db *sql.DB
+	var err error
+	if db, err = sql.Open("mysql", "root:tuhucon@tcp(127.0.0.1:3306)/test"); err != nil {
+		slog.Error(err.Error())
+	}
+	defer db.Close()
+
+	rows, err := db.Query("select * from person")
+	defer rows.Close()
+	if err == nil {
+		for rows.Next() {
+			var id int
+			var name string
+			var age int
+			rows.Scan(&id, &name, &age)
+			fmt.Println(id, name, age)
+		}
+	} else {
+		slog.Error(err.Error())
+	}
+
 	router := httprouter.New()
 
 	middleware := negroni.New()
@@ -53,7 +78,7 @@ func main() {
 		Handler: middleware,
 	}
 	//curl -v --http2-prior-knowledge http://localhost:8080/persons/45  : test http2
-	err := http2.ConfigureServer(server, &http2.Server{
+	err = http2.ConfigureServer(server, &http2.Server{
 		MaxHandlers:                  0,
 		MaxConcurrentStreams:         0,
 		MaxDecoderHeaderTableSize:    0,
