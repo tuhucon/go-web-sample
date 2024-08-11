@@ -14,6 +14,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -31,6 +32,7 @@ func main() {
 	}
 	if db, err = sql.Open("mysql", cfg.FormatDSN()); err != nil {
 		slog.Error(err.Error())
+		os.Exit(1)
 	}
 	defer db.Close()
 	// seting connection pool, max lifetime
@@ -39,6 +41,9 @@ func main() {
 	db.SetConnMaxLifetime(8 * time.Hour)
 	rows, err := db.Query("select * from person")
 	defer rows.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 	for rows.Next() { // if for end normally or break by an error, rows.close() is call automatically
 		var id int
 		var name string
@@ -62,7 +67,7 @@ func main() {
 	})
 
 	var name string
-	err = db.QueryRow("select name from users where id = ?", 1).Scan(&name) // QueryRow defers error untils we call Scan
+	err = db.QueryRow("select name from person where id = ?", 1).Scan(&name) // QueryRow defers error untils we call Scan
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) { // ErrNoRows isn't error, we should treat it as a biz logic use-case.
 			// there were no rows, but otherwise no error occurred
