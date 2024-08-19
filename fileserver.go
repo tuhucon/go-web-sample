@@ -6,17 +6,18 @@ import (
 	"fileserver/internal/controller"
 	"fileserver/internal/repository"
 	"fmt"
+	"log"
+	"log/slog"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
 	"github.com/urfave/negroni/v3"
 	_ "go.uber.org/automaxprocs"
 	"golang.org/x/net/http2"
-	"log"
-	"log/slog"
-	"net/http"
-	"os"
-	"time"
 )
 
 func main() {

@@ -3,12 +3,13 @@ package controller
 import (
 	"encoding/json"
 	"fileserver/internal/model"
-	"github.com/google/go-cmp/cmp"
-	"github.com/stretchr/testify/mock"
-	"github.com/unrolled/render"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/mock"
+	"github.com/unrolled/render"
 )
 
 type PersonRepositoryMock struct {

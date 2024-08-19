@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/unrolled/render"
 	"net/http"
+
+	"github.com/unrolled/render"
 )
 
 type BaseController struct {

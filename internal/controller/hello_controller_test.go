@@ -2,12 +2,13 @@ package controller
 
 import (
 	"fmt"
-	"github.com/google/go-cmp/cmp"
-	"github.com/unrolled/render"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/unrolled/render"
 )
 
 var helloController = NewHelloController(render.New())

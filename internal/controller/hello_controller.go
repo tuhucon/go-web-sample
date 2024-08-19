@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"github.com/unrolled/render"
 	"net/http"
 	"time"
+
+	"github.com/unrolled/render"
 )
 
 type HelloController struct {

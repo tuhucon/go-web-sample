@@ -3,8 +3,9 @@ package controller
 import (
 	"fileserver/internal/model"
 	"fileserver/internal/repository"
-	"github.com/unrolled/render"
 	"net/http"
+
+	"github.com/unrolled/render"
 )
 
 type PersonController struct {
