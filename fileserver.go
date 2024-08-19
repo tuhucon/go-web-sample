@@ -10,6 +10,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
 	"github.com/urfave/negroni/v3"
+	_ "go.uber.org/automaxprocs"
 	"golang.org/x/net/http2"
 	"log"
 	"log/slog"
