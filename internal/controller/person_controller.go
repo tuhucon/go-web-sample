@@ -19,7 +19,7 @@ func (c *PersonController) GetAll(w http.ResponseWriter, r *http.Request) error 
 	if persons, err = c.personRepository.FindAll(); err != nil {
 		return err
 	}
-	if err = c.JsonResponse(w, http.StatusOK, persons); err != nil {
+	if err = c.JSONResponse(w, http.StatusOK, persons); err != nil {
 		return err
 	}
 	return nil

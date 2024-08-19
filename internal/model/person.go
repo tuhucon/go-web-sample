@@ -1,7 +1,8 @@
 package model
 
+// Person struct represent a Person record
 type Person struct {
-	Id   int    `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 	Age  int    `json:"age"`
 }
